@@ -2,5 +2,9 @@
   "name": "drupal/puppets_pack",
   "description": "List of usefull and homemade modules.",
   "type": "drupal-module",
-  "license": "GPL-2.0-or-later"
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "drupal/stage_file_proxy": "^2.1",
+    "drupal/twig_tweak": "^3.3"
+  }
 }
