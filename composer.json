@@ -1,0 +1,6 @@
+{
+  "name": "drupal/puppets_pack",
+  "description": "List of usefull and homemade modules.",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later"
+}

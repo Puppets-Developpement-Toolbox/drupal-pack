@@ -1,0 +1,5 @@
+name: 'Puppets drupal module pack'
+type: module
+description: 'Homemade modules'
+package: Custom
+core_version_requirement: ^10 || ^11

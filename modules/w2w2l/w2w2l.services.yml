@@ -1,0 +1,9 @@
+services:
+
+  w2w2l.gateway:
+    class: Drupal\w2w2l\SalesForce
+
+  w2w2l.event_subscriber:
+    class: Drupal\w2w2l\EventSubscriber\GclidCookifier
+    tags:
+      - { name: event_subscriber }  

@@ -1,0 +1,7 @@
+ppts_design.design:
+  path: '/ppts-design/{design}'
+  defaults:
+    _title: 'Design'
+    _controller: '\Drupal\ppts_design\Controller\DesignController'
+  requirements:
+    _permission: 'access content'

@@ -1,0 +1,7 @@
+name: 'Sodexo salesforce'
+description: 'Provides salesforce service'
+type: module
+core_version_requirement: ^8.8.0 || ^9.0 || ^10.0
+package: Sodexo
+dependencies:
+  - 'webform:webform'

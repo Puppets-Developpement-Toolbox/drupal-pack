@@ -1,0 +1,15 @@
+<?php
+
+function _app_version_library_get_version() {
+  if(!empty($_ENV['APP_VERSION'])) return $_ENV['APP_VERSION'];
+  if($_ENV['APP_ENV'] === 'dev') return time();
+  return \Drupal::VERSION;
+}
+
+function app_version_library_library_info_alter(&$libraries) {
+  foreach($libraries as $k => $library) {
+    if(isset($library['version']) && $library['version'] === 'APP_VERSION') {
+      $libraries[$k]['version'] = _app_version_library_get_version();
+    }
+  }
+}
