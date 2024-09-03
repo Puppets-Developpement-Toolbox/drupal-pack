@@ -16,7 +16,8 @@ export default function pptsViteConfig({theme, root}) {
       rollupOptions: {
         input: {
           main: `${root}/web/themes/${theme}/js/main.js`,
-          global: `${root}/web/themes/${theme}/css/global.scss`,
+          global: `${root}/web/themes/${theme}/css/global.css`,
+          print: `${root}/web/themes/${theme}/css/print.css`,
         }
       },
       target: 'es2018',
