@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import liveReload from 'vite-plugin-live-reload'
 
 
-export default function pptsViteConfig({theme, root}) {
+export default function pptsViteConfig({theme, root, port}) {
   return defineConfig(({ mode }) => ({
     plugins: [
       liveReload(`${root}/web/themes/${theme}/**/*`)
@@ -24,7 +24,7 @@ export default function pptsViteConfig({theme, root}) {
       write: true
     },
     server: {
-      port: 80,
+      port: port || 80,
       host: true,
     },
     css: {
