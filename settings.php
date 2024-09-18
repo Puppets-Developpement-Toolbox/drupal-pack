@@ -122,6 +122,15 @@ if ($_ENV['APP_ENV'] === 'staging') {
   $config['environment_indicator.indicator']['name'] = 'Qualif';
 }
 
+$config['file.settings']['filename_sanitization'] = [
+  'transliterate' => true,
+  'replace_whitespace' => true,
+  'replace_non_alphanumeric' => true,
+  'deduplicate_separators' => true,
+  'lowercase' => true,
+  'replacement_character' => '-',
+];
+
 
 if ($_ENV['APP_ENV'] === 'dev') {
   include "settings.dev.php";
