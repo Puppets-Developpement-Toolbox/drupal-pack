@@ -1,17 +1,20 @@
 <?php
 
-/**
- * @var string $key
- * @var mixed $default
- * return env value,
- * throw exception 
- */
-function ppts_env(string $key) {
-  $args = func_get_args();
-  if(count($args) === 1) {
-    return $_ENV[$key] ?? throw new InvalidArgumentException("Env {$key} is missing");
+// in some case this can be called twice
+if(!function_exists('ppts_env')) {
+  /**
+   * @var string $key
+   * @var mixed $default
+   * return env value,
+   * throw exception 
+   */
+  function ppts_env(string $key) {
+    $args = func_get_args();
+    if(count($args) === 1) {
+      return $_ENV[$key] ?? throw new InvalidArgumentException("Env {$key} is missing");
+    }
+    return $_ENV[$key] ?? $args[1];
   }
-  return $_ENV[$key] ?? $args[1];
 }
 
 
