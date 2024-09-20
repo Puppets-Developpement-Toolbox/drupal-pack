@@ -3,7 +3,7 @@ services:
   w2w2l.gateway:
     class: Drupal\w2w2l\SalesForce
 
-  w2w2l.event_subscriber:
-    class: Drupal\w2w2l\EventSubscriber\GclidCookifier
+  w2w2l.gclid_listener:
+    class: Drupal\w2w2l\EventSubscriber\GclidArrivalCookifier
     tags:
       - { name: event_subscriber }  

@@ -10,9 +10,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 //import Cookie class from Drupal
 
 /**
- * Sodexo salesforce event subscriber.
+ * Webform2Web2Lead adds gclid and arrivalCookie
  */
-class GclidCookifier implements EventSubscriberInterface
+class GclidArrivalCookifier implements EventSubscriberInterface
 {
 
   /**
@@ -42,6 +42,14 @@ class GclidCookifier implements EventSubscriberInterface
       // add gclid cookie in response with ttl of 13months
       $response->headers->setCookie(new Cookie('gclid', $gclid, time() + (86400 * 30 * 13), '/'));
     }
+
+    if (!$request->cookies->has('arrivalCookie')) {
+      $fullUrl = $request->getUri();
+      //ttl is 0, it expires when browser closes 
+      $response = $event->getResponse();
+      $response->headers->setCookie(new Cookie('arrivalCookie', $fullUrl, 0, '/'));
+    }
+
   }
 
   /**
