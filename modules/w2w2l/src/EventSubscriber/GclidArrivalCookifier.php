@@ -14,43 +14,52 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class GclidArrivalCookifier implements EventSubscriberInterface
 {
-
-  /**
-   * Kernel request event handler.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
-   *   Response event.
-   */
-  public function onKernelRequest(RequestEvent $event)
-  {
-    // @todo Place code here.
-
-  }
-
-  /**
-   * Kernel response event handler.
-   *
-   * @param \Symfony\Component\HttpKernel\Event\ResponseEvent $event
-   *   Response event.
-   */
+  
   public function onKernelResponse(ResponseEvent $event)
   {
     $request = $event->getRequest();
-    $gclid = $request->query->get('gclid');
-    if ($gclid) {
-      $response = $event->getResponse();
-      // add gclid cookie in response with ttl of 13months
-      $response->headers->setCookie(new Cookie('gclid', $gclid, time() + (86400 * 30 * 13), '/'));
+    $trackingCookies = [
+      'gclid' => time() + (86400 * 30 * 13),
+      'utm_campaign' => 0,
+      'utm_term' => 0,
+      'utm_medium' => 0,
+      'utm_content' => 0,
+      'utm_source' => 0,
+    ];
+
+    foreach($trackingCookies as $cookieName => $duration) {
+      $cookieValue = $request->query->get($cookieName);
+      if ($cookieValue) {
+        $response = $event->getResponse();
+        $response->headers->setCookie(new Cookie(
+          "w2w2l-{$cookieName}", 
+          $cookieValue, 
+          $duration, 
+          '/',
+          null,
+          null,
+          false
+        ));
+      }
     }
 
     if (!$request->cookies->has('arrivalCookie')) {
       $fullUrl = $request->getUri();
       //ttl is 0, it expires when browser closes 
       $response = $event->getResponse();
-      $response->headers->setCookie(new Cookie('arrivalCookie', $fullUrl, 0, '/'));
+      $response->headers->setCookie(new Cookie(
+        'w2w2l-arrivalCookie', 
+        $fullUrl, 
+        0, 
+        '/',
+        null,
+        null,
+        false
+      ));
     }
 
   }
+
 
   /**
    * {@inheritdoc}
@@ -58,7 +67,6 @@ class GclidArrivalCookifier implements EventSubscriberInterface
   public static function getSubscribedEvents()
   {
     return [
-      KernelEvents::REQUEST => ['onKernelRequest'],
       KernelEvents::RESPONSE => ['onKernelResponse'],
     ];
   }
