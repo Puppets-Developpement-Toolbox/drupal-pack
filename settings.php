@@ -17,6 +17,14 @@ if(!function_exists('ppts_env')) {
   }
 }
 
+/**
+ * force CSS and JS aggregation.
+ */
+$config['system.performance']['css']['preprocess'] = true;
+$config['system.performance']['js']['preprocess'] = true;
+
+$settings['container_yamls'][] = __DIR__ . '/services.yml';
+
 
 /**
  * Deployment identifier.
