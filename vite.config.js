@@ -1,9 +1,17 @@
 import { defineConfig } from "vite";
 import liveReload from "vite-plugin-live-reload";
 
-export default function pptsViteConfig({ theme, root, port }) {
+/** 
+ * @param {object} option
+ * @param {string} option.theme
+ * @param {string} option.root
+ * @param {number} option.port
+ * @param {(c:UserConfigFnObject) => UserConfigFnObject} option.filter
+ */
+export default function pptsViteConfig({ theme, root, port, filter }) {
+  filter = filter || ((c) => c)
   return defineConfig(({ mode }) => {
-    const config = {
+    const config = filter({
       plugins: [liveReload(`${root}/web/themes/${theme}/**/*`)],
       root: `${root}/web${mode !== "development" ? `/themes/${theme}` : ""}`,
       base: mode !== "development" ? `/themes/${theme}/dist/` : "",
@@ -28,7 +36,7 @@ export default function pptsViteConfig({ theme, root, port }) {
       css: {
         devSourcemap: mode == "development",
       },
-    };
+    });
 
     return config;
   });
