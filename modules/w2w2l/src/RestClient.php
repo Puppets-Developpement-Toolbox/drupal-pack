@@ -77,8 +77,6 @@ class RestClient implements ClientInterface
 
   public function create($sobject, $endpoint)
   {
-
-
     $response = $this->client->request(
       'post',
       "{$this->instanceUrl}{$endpoint}",

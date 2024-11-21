@@ -20,8 +20,8 @@ class SalesForce
       $_ENV['SF_REST_ENDPOINT'],
       $_ENV['SF_REST_CLIENT_ID'],
       $_ENV['SF_REST_CLIENT_SECRET'],
-      $_ENV['SF_LOGIN'],
-      $_ENV['SF_SECURE_TOKEN']
+      $_ENV['SF_LOGIN'] ?? null,
+      $_ENV['SF_SECURE_TOKEN'] ?? null
     );
   }
 
