@@ -1,0 +1,5 @@
+services:
+  obfuscated_login_path.route_subscriber:
+    class: Drupal\obfuscated_login_path\EventSubscriber\ObfuscatedLoginPathSubscriber
+    tags:
+      - { name: event_subscriber }

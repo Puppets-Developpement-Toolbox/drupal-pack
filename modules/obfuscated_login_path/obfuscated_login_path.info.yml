@@ -1,0 +1,6 @@
+name: Obfuscated login path
+type: module
+description: Obfuscates url for login path on  Drupal websites 
+package: Custom
+core: 8.x
+core_version_requirement: ^9 || ^10 || ^11
