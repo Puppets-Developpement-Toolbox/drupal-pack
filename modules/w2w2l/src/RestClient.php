@@ -22,6 +22,7 @@ class RestClient implements ClientInterface
     $username = "",
     $password = ""
   ) {
+    
     $this->client = new Client([
       'base_uri' => trim($endpoint, '/') . '/'
     ]);

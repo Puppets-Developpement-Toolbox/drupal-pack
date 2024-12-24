@@ -263,10 +263,9 @@ final class W2W2LWebFormHandler extends WebformHandlerBase
         }
       }
     }
-
     \Drupal::moduleHandler()->invokeAll(
       'w2w2l_prepare', 
-      [&$salesforce_data]
+      [&$salesforce_data, &$data  ]
     );
     return $salesforce_data;
   }

@@ -12,6 +12,6 @@ function hook_w2w2l_sent(WebformSubmissionInterface $webformSubmission, array $s
 /**
  * called just before the salesforce lead creation
  */
-function hook_w2w2l_prepare(array &$sfData) {
+function hook_w2w2l_prepare(array &$sfData,  array &$data = [] ) {
   
 }
