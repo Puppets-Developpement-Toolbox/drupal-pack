@@ -1,30 +1,31 @@
 <?php
 
 // in some case this can be called twice
-if(!function_exists('ppts_env')) {
-  /**
-   * @var string $key
-   * @var mixed $default
-   * return env value,
-   * throw exception 
-   */
-  function ppts_env(string $key) {
-    $args = func_get_args();
-    if(count($args) === 1) {
-      return $_ENV[$key] ?? throw new InvalidArgumentException("Env {$key} is missing");
+if (!function_exists("ppts_env")) {
+    /**
+     * @var string $key
+     * @var mixed $default
+     * return env value,
+     * throw exception
+     */
+    function ppts_env(string $key)
+    {
+        $args = func_get_args();
+        if (count($args) === 1) {
+            return $_ENV[$key] ??
+                throw new InvalidArgumentException("Env {$key} is missing");
+        }
+        return $_ENV[$key] ?? $args[1];
     }
-    return $_ENV[$key] ?? $args[1];
-  }
 }
 
 /**
  * force CSS and JS aggregation.
  */
-$config['system.performance']['css']['preprocess'] = true;
-$config['system.performance']['js']['preprocess'] = true;
+$config["system.performance"]["css"]["preprocess"] = true;
+$config["system.performance"]["js"]["preprocess"] = true;
 
-$settings['container_yamls'][] = __DIR__ . '/services.yml';
-
+$settings["container_yamls"][] = __DIR__ . "/services.yml";
 
 /**
  * Deployment identifier.
@@ -34,8 +35,7 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
  * custom code that changes the container, changing this identifier will also
  * allow the container to be invalidated as soon as code is deployed.
  */
-$settings['deployment_identifier'] = ppts_env('APP_VERSION', \Drupal::VERSION);
-
+$settings["deployment_identifier"] = ppts_env("APP_VERSION", \Drupal::VERSION);
 
 /**
  * Access control for update.php script.
@@ -48,7 +48,31 @@ $settings['deployment_identifier'] = ppts_env('APP_VERSION', \Drupal::VERSION);
  * After finishing the upgrade, be sure to open this file again and change the
  * TRUE back to a FALSE!
  */
-$settings['update_free_access'] = FALSE;
+$settings["update_free_access"] = false;
+
+/**
+ * Authorized file system operations:
+ *
+ * The Update Manager module included with Drupal provides a mechanism for
+ * site administrators to securely install missing updates for the site
+ * directly through the web user interface. On securely-configured servers,
+ * the Update manager will require the administrator to provide SSH or FTP
+ * credentials before allowing the installation to proceed; this allows the
+ * site to update the new files as the user who owns all the Drupal files,
+ * instead of as the user the webserver is running as. On servers where the
+ * webserver user is itself the owner of the Drupal files, the administrator
+ * will not be prompted for SSH or FTP credentials (note that these server
+ * setups are common on shared hosting, but are inherently insecure).
+ *
+ * Some sites might wish to disable the above functionality, and only update
+ * the code directly via SSH or FTP themselves. This setting completely
+ * disables all functionality related to these authorized file operations.
+ *
+ * @see https://www.drupal.org/node/244924
+ *
+ * Remove the leading hash signs to disable.
+ */
+$settings["allow_authorize_operations"] = false;
 
 /**
  * Private file path:
@@ -63,8 +87,8 @@ $settings['update_free_access'] = FALSE;
  * See https://www.drupal.org/documentation/modules/file for more information
  * about securing private files.
  */
-$settings['file_private_path'] = "{$app_root}/../storage/private";
-$settings['php_storage']['twig']['directory'] = "../storage/php";
+$settings["file_private_path"] = "{$app_root}/../storage/private";
+$settings["php_storage"]["twig"]["directory"] = "../storage/php";
 
 /**
  * The default list of directories that will be ignored by Drupal's file API.
@@ -76,9 +100,9 @@ $settings['php_storage']['twig']['directory'] = "../storage/php";
  * @see \Drupal\Core\File\FileSystemInterface::scanDirectory()
  * @see \Drupal\Core\Extension\ExtensionDiscovery::scanDirectory()
  */
-$settings['file_scan_ignore_directories'] = [
-  'node_modules',
-  'bower_components',
+$settings["file_scan_ignore_directories"] = [
+    "node_modules",
+    "bower_components",
 ];
 
 /**
@@ -89,7 +113,7 @@ $settings['file_scan_ignore_directories'] = [
  * if your hosting configuration (i.e. RAM allocation, CPU speed) allows for a
  * larger number of entities to be processed in a single batch run.
  */
-$settings['entity_update_batch_size'] = 50;
+$settings["entity_update_batch_size"] = 50;
 
 /**
  * Entity update backup.
@@ -98,7 +122,7 @@ $settings['entity_update_batch_size'] = 50;
  * well as the original entity type and field storage definitions should be
  * retained after a successful entity update process.
  */
-$settings['entity_update_backup'] = TRUE;
+$settings["entity_update_backup"] = true;
 
 /**
  * Node migration type.
@@ -111,39 +135,39 @@ $settings['entity_update_backup'] = TRUE;
  * complete node migrations. Set this to TRUE to force the use of the classic
  * node migrations.
  */
-$settings['migrate_node_migrate_type_classic'] = FALSE;
+$settings["migrate_node_migrate_type_classic"] = false;
 
-$settings['vite']['useDevServer'] = false;
+$settings["vite"]["useDevServer"] = false;
 
-$settings['config_exclude_modules'] = [
-  'devel_generate', 'stage_file_proxy', 
-  'upgrade_status', 'update'
+$settings["config_exclude_modules"] = [
+    "devel_generate",
+    "stage_file_proxy",
+    "upgrade_status",
+    "update",
 ];
 
-$config['environment_indicator.indicator']['bg_color'] = '#a51d2d';
-$config['environment_indicator.indicator']['fg_color'] = '#ffffff';
-$config['environment_indicator.indicator']['name'] = 'Prod';
+$config["environment_indicator.indicator"]["bg_color"] = "#a51d2d";
+$config["environment_indicator.indicator"]["fg_color"] = "#ffffff";
+$config["environment_indicator.indicator"]["name"] = "Prod";
 
-$config['locale.settings']['translation']['use_source'] = 'local';
-$config['locale.settings']['translation']['path'] = "../storage/translations";
+$config["locale.settings"]["translation"]["use_source"] = "local";
+$config["locale.settings"]["translation"]["path"] = "../storage/translations";
 
-if ($_ENV['APP_ENV'] === 'staging') {
-  $config['environment_indicator.indicator']['bg_color'] = '#e66100';
-  $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
-  $config['environment_indicator.indicator']['name'] = 'Qualif';
+if ($_ENV["APP_ENV"] === "staging") {
+    $config["environment_indicator.indicator"]["bg_color"] = "#e66100";
+    $config["environment_indicator.indicator"]["fg_color"] = "#ffffff";
+    $config["environment_indicator.indicator"]["name"] = "Qualif";
 }
 
-$config['file.settings']['filename_sanitization'] = [
-  'transliterate' => true,
-  'replace_whitespace' => true,
-  'replace_non_alphanumeric' => true,
-  'deduplicate_separators' => true,
-  'lowercase' => true,
-  'replacement_character' => '-',
+$config["file.settings"]["filename_sanitization"] = [
+    "transliterate" => true,
+    "replace_whitespace" => true,
+    "replace_non_alphanumeric" => true,
+    "deduplicate_separators" => true,
+    "lowercase" => true,
+    "replacement_character" => "-",
 ];
 
-
-if ($_ENV['APP_ENV'] === 'dev') {
-  include "settings.dev.php";
+if ($_ENV["APP_ENV"] === "dev") {
+    include "settings.dev.php";
 }
-
