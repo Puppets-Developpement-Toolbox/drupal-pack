@@ -38,17 +38,17 @@ class SalesForce
       $errorMessage= $response->getBody()->getContents();
     }
 
-
-
     if (!$success) {
       \Drupal::logger('w2w2l')
         ->error("error while registering a lead: " . json_encode($r, JSON_PRETTY_PRINT));
     }
-
-    \Drupal::logger('w2w2l')
+    else{
+      \Drupal::logger('w2w2l')
       ->info("lead registered: " . json_encode($r, JSON_PRETTY_PRINT)
         . '<br>' .
         'Values: ' . json_encode($lead, JSON_PRETTY_PRINT));
+    }
+    
 
     return ['success' => $success, 'id' => $r->id ?? '', 'errorMessage' => $errorMessage ?? ''];
   }
