@@ -33,22 +33,17 @@ class SalesForce
     } catch (\GuzzleHttp\Exception\ClientException $e) {
       $response = $e->getResponse();
       \Drupal::logger('w2w2l')->error($response->getBody()->getContents() . '<br>' .
-        'Values: ' . json_encode($lead, JSON_PRETTY_PRINT));
+        'Values: ' . json_encode($lead, JSON_PRETTY_PRINT) );
       $success = false;
       $errorMessage= $response->getBody()->getContents();
     }
 
-    if (!$success) {
-      \Drupal::logger('w2w2l')
-        ->error("error while registering a lead: " . json_encode($r, JSON_PRETTY_PRINT));
-    }
-    else{
+    if ($success) {
       \Drupal::logger('w2w2l')
       ->info("lead registered: " . json_encode($r, JSON_PRETTY_PRINT)
         . '<br>' .
         'Values: ' . json_encode($lead, JSON_PRETTY_PRINT));
     }
-    
 
     return ['success' => $success, 'id' => $r->id ?? '', 'errorMessage' => $errorMessage ?? ''];
   }
