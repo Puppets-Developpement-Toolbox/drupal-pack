@@ -34,8 +34,11 @@ class SalesForce
       $response = $e->getResponse();
       \Drupal::logger('w2w2l')->error($response->getBody()->getContents() . '<br>' .
         'Values: ' . json_encode($lead, JSON_PRETTY_PRINT));
-      return $e;
+      $success = false;
+      $errorMessage= $response->getBody()->getContents();
     }
+
+
 
     if (!$success) {
       \Drupal::logger('w2w2l')
@@ -47,6 +50,6 @@ class SalesForce
         . '<br>' .
         'Values: ' . json_encode($lead, JSON_PRETTY_PRINT));
 
-    return ['success' => $success, 'id' => $r->id ?? '',];
+    return ['success' => $success, 'id' => $r->id ?? '', 'errorMessage' => $errorMessage ?? ''];
   }
 }
