@@ -13,8 +13,6 @@ use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\Plugin\WebformHandlerInterface;
 use Drupal\webform\Plugin\WebformHandlerMessageInterface;
 use Drupal\webform\WebformSubmissionInterface;
-use Drupal\w2w2l\Event\W2W2LWebformEvent;
-use Drupal\webform\Plugin\WebformHandler\RemotePostWebformHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -215,8 +213,9 @@ final class W2W2LWebFormHandler extends WebformHandlerBase
 
     \Drupal::moduleHandler()->invokeAll(
       'w2w2l_sent', 
-      [$webform_submission, $sf_data, $result]
+      [&$webform_submission, &$sf_data, &$result]
     );
+
   }
 
   protected function prepareSfObject(WebformSubmissionInterface $webform_submission)
