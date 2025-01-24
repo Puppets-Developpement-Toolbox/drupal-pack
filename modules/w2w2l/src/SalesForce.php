@@ -32,10 +32,12 @@ class SalesForce
       $success = $r->success;
     } catch (\GuzzleHttp\Exception\ClientException $e) {
       $response = $e->getResponse();
-      \Drupal::logger('w2w2l')->error($response->getBody()->getContents() . '<br>' .
+      //for some reason , you can not use $response->getBody()->getContents() twice , is it replaying the http request ? 
+      $responseBodyContent = $response->getBody()->getContents();
+      \Drupal::logger('w2w2l')->error($responseBodyContent . '<br>' .
         'Values: ' . json_encode($lead, JSON_PRETTY_PRINT) );
       $success = false;
-      $errorMessage= $response->getBody()->getContents();
+      $errorMessage= $responseBodyContent;
     }
 
     if ($success) {
