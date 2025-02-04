@@ -25,6 +25,18 @@ $config['system.performance']['js']['preprocess'] = true;
 
 $settings['container_yamls'][] = __DIR__ . '/services.yml';
 
+/**
+ * Location of the site configuration files.
+ *
+ * The $settings['config_sync_directory'] specifies the location of file system
+ * directory used for syncing configuration data. On install, the directory is
+ * created. This is used for configuration imports.
+ *
+ * The default location for this directory is inside a randomly-named
+ * directory in the public files path. The setting below allows you to set
+ * its location.
+ */
+$settings["config_sync_directory"] = $app_root . "/../config/sync";
 
 /**
  * Deployment identifier.
@@ -49,6 +61,34 @@ $settings['deployment_identifier'] = ppts_env('APP_VERSION', \Drupal::VERSION);
  * TRUE back to a FALSE!
  */
 $settings['update_free_access'] = FALSE;
+
+
+
+$settings["update_free_access"] = false;
+/**
+ * Authorized file system operations:
+ *
+ * The Update Manager module included with Drupal provides a mechanism for
+ * site administrators to securely install missing updates for the site
+ * directly through the web user interface. On securely-configured servers,
+ * the Update manager will require the administrator to provide SSH or FTP
+ * credentials before allowing the installation to proceed; this allows the
+ * site to update the new files as the user who owns all the Drupal files,
+ * instead of as the user the webserver is running as. On servers where the
+ * webserver user is itself the owner of the Drupal files, the administrator
+ * will not be prompted for SSH or FTP credentials (note that these server
+ * setups are common on shared hosting, but are inherently insecure).
+ *
+ * Some sites might wish to disable the above functionality, and only update
+ * the code directly via SSH or FTP themselves. This setting completely
+ * disables all functionality related to these authorized file operations.
+ *
+ * @see https://www.drupal.org/node/244924
+ *
+ * Remove the leading hash signs to disable.
+ */
+$settings["allow_authorize_operations"] = false;
+
 
 /**
  * Private file path:
