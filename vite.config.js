@@ -33,6 +33,7 @@ export default function pptsViteConfig({ theme, root, port, filter }) {
         port: port || 80,
         host: true,
         allowedHosts: true,
+        cors: true,
       },
       css: {
         devSourcemap: mode == "development",
