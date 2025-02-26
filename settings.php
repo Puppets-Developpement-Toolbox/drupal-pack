@@ -6,7 +6,11 @@ if(!function_exists('ppts_env')) {
    * @var string $key
    * @var mixed $default
    * return env value,
+<<<<<<< Updated upstream
    * throw exception 
+=======
+   * throw exception
+>>>>>>> Stashed changes
    */
   function ppts_env(string $key) {
     $args = func_get_args();
@@ -22,6 +26,7 @@ if(!function_exists('ppts_env')) {
  */
 $config['system.performance']['css']['preprocess'] = true;
 $config['system.performance']['js']['preprocess'] = true;
+<<<<<<< Updated upstream
 
 $settings['container_yamls'][] = __DIR__ . '/services.yml';
 
@@ -37,6 +42,11 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
  * its location.
  */
 $settings["config_sync_directory"] = $app_root . "/../config/sync";
+=======
+
+$settings['container_yamls'][] = __DIR__ . '/services.yml';
+
+>>>>>>> Stashed changes
 
 /**
  * Deployment identifier.
@@ -61,6 +71,7 @@ $settings['deployment_identifier'] = ppts_env('APP_VERSION', \Drupal::VERSION);
  * TRUE back to a FALSE!
  */
 $settings['update_free_access'] = FALSE;
+<<<<<<< Updated upstream
 
 
 
@@ -88,6 +99,8 @@ $settings["update_free_access"] = false;
  * Remove the leading hash signs to disable.
  */
 $settings["allow_authorize_operations"] = false;
+=======
+>>>>>>> Stashed changes
 
 
 /**
@@ -156,7 +169,11 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 $settings['vite']['useDevServer'] = false;
 
 $settings['config_exclude_modules'] = [
+<<<<<<< Updated upstream
   'devel_generate', 'stage_file_proxy', 
+=======
+  'devel_generate', 'stage_file_proxy',
+>>>>>>> Stashed changes
   'upgrade_status', 'update'
 ];
 
@@ -182,6 +199,16 @@ $config['file.settings']['filename_sanitization'] = [
   'replacement_character' => '-',
 ];
 
+<<<<<<< Updated upstream
+=======
+if(!empty($_ENV['DRUSH_OPTIONS_URI'])) {
+  $sitemap_base_url = $_ENV['DRUSH_OPTIONS_URI'];
+  if(!str_starts_with($sitemap_base_url, 'http')) {
+    $sitemap_base_url = "https://{$sitemap_base_url}";
+  }
+  $config['simple_sitemap.settings']['base_url'] = $sitemap_base_url;
+}
+>>>>>>> Stashed changes
 
 if ($_ENV['APP_ENV'] === 'dev') {
   include "settings.dev.php";
