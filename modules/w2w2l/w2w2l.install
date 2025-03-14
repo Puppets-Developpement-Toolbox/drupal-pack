@@ -1,0 +1,28 @@
+<?php
+
+use Drupal\webform\Entity\Webform;
+
+// migrate settings
+function w2w2l_update_10001()
+{
+  // load every webform
+  $webforms = Webform::loadMultiple();
+  foreach ($webforms as $webform) {
+    if ($webform->getHandlers()->has("webform_to_web2lead")) {
+      $handler = $webform->getHandler("webform_to_web2lead");
+      $settings = $handler->getSettings();
+      $new_mapping = [];
+      foreach ($settings["salesforce_mapping"] as $key => $value) {
+        if (!is_array($value)) {
+          $new_mapping[] = [
+            "salesforce" => $value,
+            "value" => "{{data.{$key}}}",
+          ];
+        }
+      }
+      $settings["salesforce_mapping"] = $new_mapping;
+      $handler->setSettings($settings);
+      $webform->save();
+    }
+  }
+}
