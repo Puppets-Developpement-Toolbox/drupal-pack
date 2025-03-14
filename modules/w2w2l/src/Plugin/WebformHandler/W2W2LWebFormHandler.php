@@ -153,6 +153,8 @@ final class W2W2LWebFormHandler extends WebformHandlerBase
       $form_state->getValue("salesforce_mapping") ?:
       $this->configuration["salesforce_mapping"];
 
+    $form["salesforce_mapping"]["help"] = WebformTwigExtension::buildTwigHelp();
+
     foreach ($mappings as $i => $mapping) {
       $form["salesforce_mapping"][] = [
         "#prefix" => "<tr>",
