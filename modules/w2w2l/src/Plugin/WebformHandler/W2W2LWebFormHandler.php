@@ -314,13 +314,12 @@ final class W2W2LWebFormHandler extends WebformHandlerBase
     foreach ($salesforce_mapping as $mapping) {
       $value = WebformTwigExtension::renderTwigTemplate(
         $webform_submission,
-        $mapping["value"]
+        "{% endautoescape %}{$mapping["value"]}{{% endautoescape %}"
       );
 
       $value = trim($value);
       if (!empty($value)) {
         // Begin Only cast types
-        $value = html_entity_decode($value);
         if ($value === "false") {
           $value = false;
         }
