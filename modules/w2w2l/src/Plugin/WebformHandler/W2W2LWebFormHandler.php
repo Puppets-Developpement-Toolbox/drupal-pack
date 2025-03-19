@@ -314,7 +314,7 @@ final class W2W2LWebFormHandler extends WebformHandlerBase
     foreach ($salesforce_mapping as $mapping) {
       $value = WebformTwigExtension::renderTwigTemplate(
         $webform_submission,
-        "{% endautoescape %}{$mapping["value"]}{{% endautoescape %}"
+        "{% autoescape false %}{$mapping["value"]}{% endautoescape %}"
       );
 
       $value = trim($value);
@@ -349,8 +349,8 @@ final class W2W2LWebFormHandler extends WebformHandlerBase
     array $keys,
     array $target,
     $value = null
-  ): array {
-    if ($keys) {
+  ) {
+    if (count($keys)) {
       $key = array_shift($keys);
       $target[$key] = $this->digArrayAndPlaceAtLast($keys, [], $value);
     } else {

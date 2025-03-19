@@ -22,7 +22,7 @@ class RestClient implements ClientInterface
     $username = "",
     $password = ""
   ) {
-    
+
     $this->client = new Client([
       'base_uri' => trim($endpoint, '/') . '/'
     ]);
@@ -37,7 +37,6 @@ class RestClient implements ClientInterface
           'client_secret' => $client_secret,
           'username' => $username,
           'password' => $password
-
         ]
       ]);
       $data = json_decode($response->getBody());
