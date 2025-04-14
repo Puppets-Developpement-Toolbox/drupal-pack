@@ -243,6 +243,7 @@ final class W2W2LWebFormHandler extends WebformHandlerBase
 
           // Begin Only cast types
           $value = html_entity_decode($value);
+          $value = mb_convert_encoding($value, 'UTF-8', mb_detect_encoding($value));
           if ($value === "false") {
             $value = false;
           }
