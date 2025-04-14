@@ -2,6 +2,6 @@
 parameters:
   http.response.debug_cacheability_headers: false
   twig.config:
-      debug: false
+      debug: true
       auto_reload: null
-      cache: true
+      cache: false
