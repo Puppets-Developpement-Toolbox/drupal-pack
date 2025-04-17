@@ -13,6 +13,10 @@ function w2w2l_update_10001()
       $settings = $handler->getSettings();
       $new_mapping = [];
       foreach ($settings["salesforce_mapping"] as $key => $value) {
+        if(is_array($value)) {
+          // this webform is migrated
+          continue 2;
+        }
         if (!is_array($value)) {
           $new_mapping[] = [
             "salesforce" => $value,
