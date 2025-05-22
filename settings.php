@@ -157,7 +157,7 @@ $settings['vite']['useDevServer'] = false;
 
 $settings['config_exclude_modules'] = [
   'devel_generate', 'stage_file_proxy', 
-  'upgrade_status', 'update'
+  'upgrade_status', 'update', 'devel', 'webprofiler'
 ];
 
 $config['environment_indicator.indicator']['bg_color'] = '#a51d2d';
