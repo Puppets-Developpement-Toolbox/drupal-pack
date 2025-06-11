@@ -207,9 +207,13 @@ final class W2W2LWebFormHandler extends WebformHandlerBase
   public function preSave(WebformSubmissionInterface $webform_submission)
   {
     $sf_data = $this->prepareSfObject($webform_submission);
-
+    if($sf_data === []) {
+      \Drupal::logger('w2w2l')->warning('No data to send to Salesforce.');
+      return;
+    }else{
     $result = \Drupal::service('w2w2l.gateway')
       ->send($sf_data, $this->configuration['object_url']);
+    }
 
     \Drupal::moduleHandler()->invokeAll(
       'w2w2l_sent', 
@@ -243,6 +247,7 @@ final class W2W2LWebFormHandler extends WebformHandlerBase
 
           // Begin Only cast types
           $value = html_entity_decode($value);
+
           $value = mb_convert_encoding($value, 'UTF-8', mb_detect_encoding($value));
           if ($value === "false") {
             $value = false;
