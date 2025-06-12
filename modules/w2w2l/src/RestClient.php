@@ -6,6 +6,7 @@ use Drupal\w2w2l\ClientInterface;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class RestClient implements ClientInterface
 {
@@ -77,17 +78,22 @@ class RestClient implements ClientInterface
 
   public function create($sobject, $endpoint)
   {
-    $response = $this->client->request(
-      'post',
-      "{$this->instanceUrl}{$endpoint}",
-      [
-        RequestOptions::HEADERS => [
-          'Authorization' => "Bearer {$this->accessToken}",
-          'X-PrettyPrint' => 1,
-        ],
-        RequestOptions::JSON => $sobject,
-      ]
-    );
+    try {
+      $response = $this->client->request(
+        'post',
+        "{$this->instanceUrl}{$endpoint}",
+        [
+          RequestOptions::HEADERS => [
+            'Authorization' => "Bearer {$this->accessToken}",
+            'X-PrettyPrint' => 1,
+          ],
+          RequestOptions::JSON => $sobject,
+        ]
+      );
+    } catch(ClientExceptionInterface $e) {
+      $message = $e->getMessage();
+      throw new Exception("Invalid lead :{$message} \n".var_export($sobject, true));
+    }
 
     return json_decode($response->getBody());
   }
