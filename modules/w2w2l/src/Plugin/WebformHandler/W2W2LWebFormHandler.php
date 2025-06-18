@@ -291,17 +291,26 @@ final class W2W2LWebFormHandler extends WebformHandlerBase
   {
     $sf_data = $this->prepareSfObject($webform_submission);
 
+    try{
     $result = \Drupal::service("w2w2l.gateway")->send(
       $sf_data,
       $this->configuration["object_url"]
-    );
-
+    );}
+    catch (\Exception $e) {
+      \Drupal::logger("w2w2l")->error(
+        "Error sending data to Salesforce: @message",
+        ["@message" => $e->getMessage()]
+      );
+      $result['success'] = false;
+      $result['errorMessage'] = $e->getMessage();
+    }
+    
     \Drupal::moduleHandler()->invokeAll("w2w2l_sent", [
       $webform_submission,
       $sf_data,
       $result,
     ]);
-  }
+  } 
 
   protected function prepareSfObject(
     WebformSubmissionInterface $webform_submission
