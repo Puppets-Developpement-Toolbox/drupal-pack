@@ -140,7 +140,7 @@ $config['environment_indicator.indicator']['bg_color'] = '#a51d2d';
 $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
 $config['environment_indicator.indicator']['name'] = 'Prod';
 
-$config['locale.settings']['translation']['use_source'] = 'local';
+// $config['locale.settings']['translation']['use_source'] = 'local';
 $config['locale.settings']['translation']['path'] = "../storage/translations";
 
 if ($_ENV['APP_ENV'] === 'staging') {
