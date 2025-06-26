@@ -158,6 +158,17 @@ $config['file.settings']['filename_sanitization'] = [
   'replacement_character' => '-',
 ];
 
+/**
+ * Enable access to rebuild.php.
+ *
+ * This setting can be enabled to allow Drupal's php and database cached
+ * storage to be cleared via the rebuild.php page. Access to this page can also
+ * be gained by generating a query string from rebuild_token_calculator.sh and
+ * using these parameters in a request to rebuild.php.
+ */
+$settings['rebuild_access'] = FALSE;
+
+
 
 if ($_ENV['APP_ENV'] === 'dev') {
   include "settings.dev.php";
