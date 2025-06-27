@@ -42,8 +42,11 @@ function w2w2l_tokens($type, $tokens, array $data, array $options, BubbleableMet
     $bubbleable_metadata->setCacheMaxAge(0);
     foreach($tokens as $token => $original) {
       $suffix = str_replace('cookie:', '', $token);
-      $replacement = Drupal::request()->cookies->get("w2w2l-{$suffix}", '');
-      $replacements[$original] = $replacement;
+      $request = Drupal::request();
+      $replacement = $request->cookies->get("w2w2l-{$suffix}", '');
+      if(empty($replacement)) {
+        $replacement = $request->query->get($suffix);
+      }
     }
   }
   return $replacements;
