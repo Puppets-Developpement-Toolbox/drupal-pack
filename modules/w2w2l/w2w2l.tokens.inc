@@ -35,11 +35,13 @@ function w2w2l_token_info() {
 
 /**
 * Implements hook_tokens().
-*/
+* done client site
 function w2w2l_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
   if ($type == 'w2w2l') {
-    $bubbleable_metadata->setCacheMaxAge(0);
+    dump(func_get_args());die();
+    // replace only on POST to avoid cache issue
+    // and get first lost cookie value
     foreach($tokens as $token => $original) {
       $suffix = str_replace('cookie:', '', $token);
       $request = Drupal::request();
@@ -47,7 +49,9 @@ function w2w2l_tokens($type, $tokens, array $data, array $options, BubbleableMet
       if(empty($replacement)) {
         $replacement = $request->query->get($suffix);
       }
+      $replacements[$original] = $replacement;
     }
   }
   return $replacements;
 }
+*/

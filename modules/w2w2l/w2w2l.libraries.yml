@@ -1,0 +1,6 @@
+cookie_token:
+  version: 1.x
+  js:
+    js/cookie.token.js: {}
+  dependencies:
+    - core/drupal

@@ -1,2 +1,8 @@
 <?php
 
+// add js to handle cookie value
+function w2w2l_form_alter(&$form, $form_state, $form_id) {
+  if(str_starts_with($form_id, 'webform')) {
+    $form['#attached']['library'][] = 'w2w2l/cookie_token';
+  }
+}

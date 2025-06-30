@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class GclidArrivalCookifier implements EventSubscriberInterface
 {
-  
+
   public function onKernelResponse(ResponseEvent $event)
   {
     $request = $event->getRequest();
@@ -32,9 +32,9 @@ class GclidArrivalCookifier implements EventSubscriberInterface
       if ($cookieValue) {
         $response = $event->getResponse();
         $response->headers->setCookie(new Cookie(
-          "w2w2l-{$cookieName}", 
-          $cookieValue, 
-          $duration, 
+          "w2w2l-{$cookieName}",
+          $cookieValue,
+          $duration,
           '/',
           null,
           null,
@@ -43,14 +43,14 @@ class GclidArrivalCookifier implements EventSubscriberInterface
       }
     }
 
-    if (!$request->cookies->has('arrivalCookie')) {
+    if (!$request->cookies->has('w2w2l-arrivalCookie')) {
       $fullUrl = $request->getUri();
-      //ttl is 0, it expires when browser closes 
+      //ttl is 0, it expires when browser closes
       $response = $event->getResponse();
       $response->headers->setCookie(new Cookie(
-        'w2w2l-arrivalCookie', 
-        $fullUrl, 
-        0, 
+        'w2w2l-arrivalCookie',
+        $fullUrl,
+        0,
         '/',
         null,
         null,
