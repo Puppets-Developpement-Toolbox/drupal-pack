@@ -39,7 +39,6 @@ function w2w2l_token_info() {
 function w2w2l_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
   if ($type == 'w2w2l') {
-    dump(func_get_args());die();
     // replace only on POST to avoid cache issue
     // and get first lost cookie value
     foreach($tokens as $token => $original) {
