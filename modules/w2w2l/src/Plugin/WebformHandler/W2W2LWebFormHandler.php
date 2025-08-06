@@ -323,8 +323,7 @@ final class W2W2LWebFormHandler extends WebformHandlerBase
     foreach ($salesforce_mapping as $mapping) {
       $value = WebformTwigExtension::renderTwigTemplate(
         $webform_submission,
-        $mapping["value"],
-        ['autoescape' => false]
+        "{% autoescape false %}{$mapping["value"]}{% endautoescape %}"
       );
 
       $value = trim($value);
