@@ -87,7 +87,7 @@ class RestClient implements ClientInterface
             'Authorization' => "Bearer {$this->accessToken}",
             'X-PrettyPrint' => 1,
           ],
-          RequestOptions::JSON => $sobject,
+          "body" => json_encode($sobject, JSON_UNESCAPED_UNICODE),
         ]
       );
     } catch(ClientExceptionInterface $e) {
