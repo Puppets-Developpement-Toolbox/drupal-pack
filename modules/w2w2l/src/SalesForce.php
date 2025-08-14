@@ -40,7 +40,7 @@ class SalesForce
         'Values: ' . json_encode($lead, JSON_PRETTY_PRINT));
       throw $e;
     }
-
+    // RequestException $e // with json_decode($e->getResponse()->getBody()->getContents(), true) should be used , better verbosity https://github.com/guzzle/guzzle/issues/2185
     if (!$success) {
       \Drupal::logger('w2w2l')
         ->error("error while registering a lead: " . json_encode($r, JSON_PRETTY_PRINT));
