@@ -34,6 +34,9 @@ export default function pptsViteConfig({ theme, root, port, filter }) {
         host: true,
         allowedHosts: true,
         cors: true,
+        watch: {
+          ignored: ["**/web/core/**", "**/web/modules/contrib/**", "**/web/themes/contrib/**", "**/web/sites/**", "**/vendor/**", , "**/config/**", , "**/storage/**"],
+        }
       },
       css: {
         devSourcemap: mode == "development",
