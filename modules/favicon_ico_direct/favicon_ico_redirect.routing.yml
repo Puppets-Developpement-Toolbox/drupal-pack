@@ -1,0 +1,6 @@
+favicon_ico_redirect.test:
+  path: '/favicon.ico'
+  defaults:
+    _controller: '\Drupal\favicon_ico_redirect\Controller\FaviconIcoRedirectController'
+  requirements:
+    _permission: 'access content'
