@@ -3,6 +3,12 @@
   "description": "List of usefull and homemade modules.",
   "type": "drupal-module",
   "license": "GPL-2.0-or-later",
+  "repositories": [
+      {
+          "type": "composer",
+          "url": "https://packages.drupal.org/8"
+      }
+  ],
   "require": {
     "drupal/admin_toolbar": "^3.4",
     "drupal/antibot": "^2.0",
@@ -10,8 +16,8 @@
     "drupal/gin": "^3.0@RC",
     "drupal/gin_toolbar": "^1.0@RC",
     "drupal/health_check": "^3.1",
-    "drupal/image_widget_crop": "^2.4",
-    "drupal/media_responsive_thumbnail": "^1.5",
+    "drupal/image_widget_crop": "^3.0",
+    "drupal/media_responsive_thumbnail": "^2.0",
     "drupal/metatag": "^2.0",
     "drupal/paragraphs": "^1.17",
     "drupal/rebuild_cache_access": "^1.12",
@@ -19,9 +25,14 @@
     "drupal/simple_sitemap": "^4.1",
     "drupal/stage_file_proxy": ">2.1",
     "drupal/twig_tweak": "^3.3",
+<<<<<<< Updated upstream
     "drupal/vite": "~1.4.0",
     "drupal/webform": "^6.2",
     "drupal/webp": "^1.0@RC",
+=======
+    "drupal/vite": "^1.1",
+    "drupal/webform": "^6.3@beta",
+>>>>>>> Stashed changes
     "drush/drush": ">12.4",
     "symfony/dotenv": ">6.4"
   }

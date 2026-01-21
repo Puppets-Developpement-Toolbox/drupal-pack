@@ -3,5 +3,5 @@ type: theme
 'base theme': stable9
 starterkit: true
 version: VERSION
-core_version_requirement: ^10
+core_version_requirement: ^10 || ^11.0
 generator: 'starterkit_theme:10.2.3'

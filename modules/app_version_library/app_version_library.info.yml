@@ -2,4 +2,4 @@ name: 'App_VERSION library keyword'
 type: module
 description: 'Add support for APP_VERSION library keyword'
 package: Custom
-core_version_requirement: ^10
+core_version_requirement: ^10 || ^11.0
