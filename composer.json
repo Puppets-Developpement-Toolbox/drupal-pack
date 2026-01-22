@@ -28,7 +28,7 @@
     "drupal/vite": "~1.4.0",
     "drupal/webp": "^1.0@RC",
     "drupal/webform": "^6.3@beta",
-    "drush/drush": ">12.4",
+    "drush/drush": "^13",
     "symfony/dotenv": ">6.4"
   }
 }
