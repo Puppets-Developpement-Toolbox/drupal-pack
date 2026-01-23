@@ -38,7 +38,6 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
   {
     return [
       "object_url" => "",
-      // "salesforce_mapping" => [],
       "debug" => false,
       "prefill_param_name" => "sf_id",
     ];
@@ -49,7 +48,7 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
    */
   public function buildConfigurationForm(
     array $form,
-    FormStateInterface $form_statedum
+    FormStateInterface $form_state
   ) {
     $webform = $this->getWebform();
     $form["object_url"] = [
@@ -59,41 +58,6 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
       "#required" => true,
       "#default_value" => $this->configuration["object_url"],
     ];
-
-    // $map_sources = [];
-    // $elements = $this->webform->getElementsInitializedAndFlattened();
-    // foreach ($elements as $key => $element) {
-    //   if (
-    //     strpos($key, "#") === 0 ||
-    //     empty($element["#title"]) ||
-    //     !empty($element["#webform_composite_elements"])
-    //   ) {
-    //     if (!empty($element["#webform_composite_elements"])) {
-    //       foreach (
-    //         $element["#webform_composite_elements"]
-    //         as $subkey => $subelement
-    //       ) {
-    //         $map_sources[$key . "_" . $subkey] =
-    //           $element["#title"] . " - " . $subelement["#title"];
-    //       }
-    //     }
-    //     continue;
-    //   }
-    //   $map_sources[$key] = $element["#title"];
-    // }
-    //
-    // $field_definitions = $this->submissionStorage->getFieldDefinitions();
-    // $field_definitions = $this->submissionStorage->checkFieldDefinitionAccess(
-    //   $webform,
-    //   $field_definitions
-    // );
-    // foreach ($field_definitions as $key => $field_definition) {
-    //   $map_sources[$key] =
-    //     $field_definition["title"] .
-    //     " (type : " .
-    //     $field_definition["type"] .
-    //     ")";
-    // }
 
     $form["debug"] = [
       "#type" => "checkbox",
@@ -113,150 +77,8 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
       ),
       '#required' => true,
       "#default_value" => $this->configuration["prefill_param_name"],
-      // "#states" => [
-      //   "visible" => [
-      //     ":input[name=\"settings[enable_prefill]\"]" => ["checked" => true],
-      //   ],
-      // ],
     ];
 
-    // $form["prefill"]["prefill_mapping"] = [
-    //   "#type" => "details",
-    //   "#title" => $this->t("Prefill field mapping"),
-    //   "#description" => $this->t(
-    //     "Map Salesforce fields to webform fields for prefilling."
-    //   ),
-    //   "#tree" => true,
-    //   "#prefix" => '<div id="w2w2l-prefill-mapping-table">',
-    //   "#suffix" => "</div>",
-    //   "#states" => [
-    //     "visible" => [
-    //       ":input[name=\"settings[enable_prefill]\"]" => ["checked" => true],
-    //     ],
-    //   ],
-    // ];
-
-    // $prefill_mappings =
-    //   $form_state->getValue("prefill_mapping") ?:
-    //   $this->configuration["prefill_mapping"];
-
-    // $form["prefill"]["prefill_mapping"]["prefix"] = [
-    //   "#type" => "markup",
-    //   "#markup" => '<table><thead>
-    //     <tr>
-    //       <th>Salesforce field</th>
-    //       <th>Webform field</th>
-    //     </tr>
-    //   </thead>',
-    // ];
-
-    // foreach ($prefill_mappings as $i => $mapping) {
-    //   $form["prefill"]["prefill_mapping"][$i] = [
-    //     "#prefix" => "<tr>",
-    //     "#suffix" => "</tr>",
-    //     "salesforce_field" => [
-    //       "#prefix" => "<td>",
-    //       "#suffix" => "</td>",
-    //       "#type" => "textfield",
-    //       "#default_value" => $mapping["salesforce_field"] ?? "",
-    //       "#placeholder" => "FirstName",
-    //     ],
-    //     "webform_field" => [
-    //       "#prefix" => "<td>",
-    //       "#suffix" => "</td>",
-    //       "#type" => "select",
-    //       "#options" => $map_sources,
-    //       "#default_value" => $mapping["webform_field"] ?? "",
-    //       "#empty_option" => $this->t("- Select field -"),
-    //     ],
-    //   ];
-    // }
-
-    // $form["prefill"]["prefill_mapping"]["suffix"] = [
-    //   "#type" => "markup",
-    //   "#markup" => "</table>",
-    // ];
-
-    // $form["prefill"]["prefill_mapping"]["footer"]["add_prefill_row"] = [
-    //   "#type" => "submit",
-    //   "#value" => $this->t("Add prefill mapping"),
-    //   "#name" => "w2w2l_ajax_add_prefill_row_action",
-    //   "#attributes" => [
-    //     "class" => ["button--primary"],
-    //   ],
-    //   "#submit" => [[get_called_class(), "addPrefillMapping"]],
-    //   "#ajax" => [
-    //     "callback" => [get_called_class(), "refreshPrefillMappingAjaxCallback"],
-    //     "wrapper" => "w2w2l-prefill-mapping-table",
-    //     "progress" => ["type" => "fullscreen"],
-    //   ],
-    // ];
-
-    // $form["salesforce_mapping"] = [
-    //   "#type" => "fieldset",
-    //   "#tree" => true,
-    //   "#prefix" => '<div id="w2w2l-mapping-table">',
-    //   "#suffix" => "</div>",
-    //   "#title" => $this->t("Mapping settings"),
-    //   "#help" => $this->t(
-    //     'Only Maps with specified "Salesforce Web-to-Lead Campaign Field" will be submitted to salesforce.'
-    //   ),
-    // ];
-    // $form["salesforce_mapping"]["prefix"] = [
-    //   "#type" => "markup",
-    //   "#markup" => '<table><thead>
-    //     <tr>
-    //       <th>Salesforce mapping</th>
-    //       <th>Compute value</th>
-    //       <th></th>
-    //     </tr>
-    //   </thead>',
-    // ];
-
-    // $mappings =
-    //   $form_state->getValue("salesforce_mapping") ?:
-    //   $this->configuration["salesforce_mapping"];
-
-    // $form["salesforce_mapping"]["help"] = WebformTwigExtension::buildTwigHelp();
-
-    // foreach ($mappings as $i => $mapping) {
-    //   $form["salesforce_mapping"][] = [
-    //     "#prefix" => "<tr>",
-    //     "#suffix" => "</tr>",
-    //     "salesforce" => [
-    //       "#prefix" => "<td>",
-    //       "#suffix" => "</td>",
-    //       "#type" => "textfield",
-    //       "#default_value" => $mapping["salesforce"],
-    //     ],
-    //     "value" => [
-    //       "#prefix" => "<td>",
-    //       "#suffix" => "</td>",
-    //       "#type" => "textarea",
-    //       "#default_value" => $mapping["value"],
-    //     ],
-    //   ];
-    // }
-
-    // $form["salesforce_mapping"]["suffix"] = [
-    //   "#type" => "markup",
-    //   "#markup" => "</table>",
-    // ];
-
-    // $form["salesforce_mapping"]["footer"]["add_row"] = [
-    //   "#type" => "submit",
-    //   "#value" => $this->t("Add new mapping"),
-    //   "#name" => "w2w2l_ajax_add_row_action",
-    //   "#attributes" => [
-    //     "class" => ["button--primary"],
-    //   ],
-    //   "#submit" => [[get_called_class(), "addMapping"]],
-    //   "#ajax" => [
-    //     "callback" => [get_called_class(), "refreshMappingAjaxCallback"],
-    //     "wrapper" => "w2w2l-mapping-table",
-    //     "progress" => ["type" => "fullscreen"],
-    //   ],
-    // ];
     WebformElementHelper::convertRenderMarkupToStrings($form);
 
     return $form;
@@ -318,7 +140,7 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
     $files = [];
     foreach($data as $key => $value) {
       $element = $webform->getElement($key);
-      if($element['#type'] == 'webform_document_file') {
+      if(str_ends_with($element['#type'], '_file')) {
         $files[$key] = $value;
         unset($data[$key]);
       }
@@ -330,7 +152,7 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
         $this->configuration["object_url"],
         $data
       );
-      dump($result);
+
 
       foreach($files as $key => $file) {
         $fileEntity = $fileStorage->load($file);
@@ -338,7 +160,6 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
           $id,
           new \SplFileObject($fileEntity->getFileUri())
         );
-        dump($result);
       }
     } catch (\Exception $e) {
       \Drupal::logger("w2w2l")->error(
@@ -348,7 +169,7 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
       $result['success'] = false;
       $result['errorMessage'] = $e->getMessage();
     }
-die();
+
     \Drupal::moduleHandler()->invokeAll("w2w2l_sent", [
       $webform_submission,
       $data,
