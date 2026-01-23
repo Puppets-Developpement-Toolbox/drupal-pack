@@ -7,6 +7,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Client\ClientExceptionInterface;
+use SplFileInfo;
 
 class RestClient implements ClientInterface
 {
@@ -62,7 +63,6 @@ class RestClient implements ClientInterface
           'grant_type' => 'client_credentials',
           'client_id' => $client_id,
           'client_secret' => $client_secret,
-
         ]
       ]);
       $data = json_decode($response->getBody());
@@ -94,6 +94,89 @@ class RestClient implements ClientInterface
     } catch(ClientExceptionInterface $e) {
       $message = $e->getMessage();
       throw new Exception("Invalid lead :{$message} \n".var_export($sobject, true));
+    }
+
+    return json_decode($response->getBody());
+  }
+
+  public function retrieve($id, $endpoint, $fields = [])
+  {
+    try {
+      $url = "{$this->instanceUrl}{$endpoint}/{$id}";
+
+      // Ajouter les champs spécifiques si fournis
+      if (!empty($fields)) {
+        $url .= '?fields=' . implode(',', $fields);
+      }
+
+      $response = $this->client->request(
+        'get',
+        $url,
+        [
+          RequestOptions::HEADERS => [
+            'Authorization' => "Bearer {$this->accessToken}",
+            'X-PrettyPrint' => 1,
+            'Content-Type' => 'application/json'
+          ],
+        ]
+      );
+    } catch(ClientExceptionInterface $e) {
+      $message = $e->getMessage();
+      throw new Exception("Unable to retrieve {$sobject_type} with ID {$id}: {$message}");
+    }
+
+    return json_decode($response->getBody(), true);
+  }
+
+
+  public function update($id, $endpoint, $sobject)
+  {
+    try {
+      $url = "{$this->instanceUrl}{$endpoint}/{$id}";
+
+      $response = $this->client->request(
+        'PATCH',
+        $url,
+        [
+          RequestOptions::HEADERS => [
+            'Authorization' => "Bearer {$this->accessToken}",
+            'X-PrettyPrint' => 1,
+            'Content-Type' => 'application/json'
+          ],
+          "body" => json_encode($sobject, JSON_UNESCAPED_UNICODE),
+        ]
+      );
+    } catch(ClientExceptionInterface $e) {
+      $message = $e->getMessage();
+      throw new Exception("Unable to update {$endpoint} with ID {$id}: {$message}");
+    }
+
+    return json_decode($response->getBody());
+  }
+
+  public function attach($id, \SplFileInfo $file) {
+    try {
+      $url = "{$this->instanceUrl}/services/data/v58.0/sobjects/Attachment";
+
+      $response = $this->client->request(
+        'POST',
+        $url,
+        [
+          RequestOptions::HEADERS => [
+            'Authorization' => "Bearer {$this->accessToken}",
+            'X-PrettyPrint' => 1,
+            'Content-Type' => 'application/json'
+          ],
+          "body" => json_encode([
+            'ParentId' => $id,
+            'Name' => $file->getFilename(),
+            'Body' => base64_encode(file_get_contents($file->getPathname())),
+          ], JSON_UNESCAPED_UNICODE),
+        ]
+      );
+    } catch(ClientExceptionInterface $e) {
+      $message = $e->getMessage();
+      throw new Exception("Unable to attach file to {$id}: {$message}");
     }
 
     return json_decode($response->getBody());

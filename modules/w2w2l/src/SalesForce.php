@@ -53,4 +53,49 @@ class SalesForce
 
     return ['success' => $success, 'id' => $r->id ?? '',];
   }
+
+  public function retrieve($id, $sobject_type = 'Lead', $fields = [])
+  {
+    try {
+      $data = $this->client->retrieve($id, $sobject_type, $fields);
+
+      \Drupal::logger('w2w2l')
+        ->info("Retrieved {$sobject_type} with ID {$id}: " . json_encode($data, JSON_PRETTY_PRINT));
+
+      return ['success' => true, 'data' => $data];
+    } catch (\Throwable $e) {
+      \Drupal::logger('w2w2l')->error($e->getMessage());
+      return ['success' => false, 'error' => $e->getMessage()];
+    }
+  }
+
+  public function update($id, $sobject_type, $sobject)
+  {
+    try {
+      $data = $this->client->update($id, $sobject_type, $sobject);
+
+      \Drupal::logger('w2w2l')
+        ->info("Updated {$sobject_type} with ID {$id}: " . json_encode($data, JSON_PRETTY_PRINT));
+
+      return ['success' => true, 'data' => $data];
+    } catch (\Throwable $e) {
+      \Drupal::logger('w2w2l')->error($e->getMessage());
+      return ['success' => false, 'error' => $e->getMessage()];
+    }
+  }
+
+
+  public function attach($id, \SplFileInfo $file) {
+    try {
+      $data = $this->client->attach($id, $file);
+
+      \Drupal::logger('w2w2l')
+        ->info("Attached file to {$id}: " . json_encode($data, JSON_PRETTY_PRINT));
+
+      return ['success' => true, 'data' => $data];
+    } catch (\Throwable $e) {
+      \Drupal::logger('w2w2l')->error($e->getMessage());
+      return ['success' => false, 'error' => $e->getMessage()];
+    }
+  }
 }
