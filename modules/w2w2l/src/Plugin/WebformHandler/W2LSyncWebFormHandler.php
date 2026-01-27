@@ -96,26 +96,26 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
 
   public function alterElements(array &$elements, WebformInterface $webform) {
     $id = \Drupal::request()->query->get($this->configuration['prefill_param_name'], null);
-    if($id) {
-      $salesforce = \Drupal::service("w2w2l.gateway");
-      $retrieved = $salesforce->retrieve($id, $this->configuration["object_url"]);
-      if($retrieved['success']) {
-        $sfObject = array_change_key_case($retrieved['data'], CASE_LOWER);
-        foreach($elements as $key => $element) {
-          if(empty($sfObject[$key])) continue;
+    if(empty($id)) return;
 
-          switch ($element['#type']) {
-            case 'textfield':
-            case 'email':
-            case 'select':
-            case 'checkbox':
-            case 'radios':
-            case 'textarea':
-              $elements[$key]['#default_value'] = $sfObject[$key];
-              break;
-            default:
-              break;
-          }
+    $salesforce = \Drupal::service("w2w2l.gateway");
+    $retrieved = $salesforce->retrieve($id, $this->configuration["object_url"]);
+    if($retrieved['success']) {
+      $sfObject = array_change_key_case($retrieved['data'], CASE_LOWER);
+      foreach($elements as $key => $element) {
+        if(empty($sfObject[$key])) continue;
+
+        switch ($element['#type']) {
+          case 'textfield':
+          case 'email':
+          case 'select':
+          case 'checkbox':
+          case 'radios':
+          case 'textarea':
+            $elements[$key]['#default_value'] = $sfObject[$key];
+            break;
+          default:
+            break;
         }
       }
     }
@@ -127,12 +127,15 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
    */
   public function preSave(WebformSubmissionInterface $webform_submission)
   {
-    $id = \Drupal::request()->query->get($this->configuration['prefill_param_name'], null);
+    $idKey = $this->configuration['prefill_param_name'];
+    $id = \Drupal::request()->query->get($idKey, null);
 
     if(empty($id)) return;
 
     $data = $webform_submission->getData();
     $data = array_filter($data);
+    if(!empty($data[$idKey])) unset($data[$idKey]);
+
     $webform = $webform_submission->getWebform();
     /** @var FileStorageInterface $fileStorage */
     $fileStorage = \Drupal::entityTypeManager()->getStorage('file');
