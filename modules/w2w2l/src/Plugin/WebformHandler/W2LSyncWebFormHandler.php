@@ -143,8 +143,8 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
     $files = [];
     foreach($data as $key => $value) {
       $element = $webform->getElement($key);
-      if(str_ends_with($element['#type'], '_file')) {
-        $files[$key] = $value;
+      if(str_ends_with($element['#type'], '_file') || $element['#type'] === 'webform_dropzonejs') {
+        $files = array_merge($files, (array)$value);
         unset($data[$key]);
       }
     }
@@ -157,7 +157,7 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
       );
 
 
-      foreach($files as $key => $file) {
+      foreach($files as $file) {
         $fileEntity = $fileStorage->load($file);
         $result = \Drupal::service("w2w2l.gateway")->attach(
           $id,
