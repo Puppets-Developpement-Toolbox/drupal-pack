@@ -156,7 +156,7 @@ class RestClient implements ClientInterface
 
   public function attach($id, \SplFileInfo $file) {
     try {
-      $url = "{$this->instanceUrl}/services/data/v58.0/sobjects/Attachment";
+      $url = "{$this->instanceUrl}/services/data/v58.0/sobjects/ContentVersion";
 
       $response = $this->client->request(
         'POST',
@@ -168,17 +168,27 @@ class RestClient implements ClientInterface
             'Content-Type' => 'application/json'
           ],
           "body" => json_encode([
-            'ParentId' => $id,
-            'Name' => $file->getFilename(),
-            'Body' => base64_encode(file_get_contents($file->getPathname())),
+            // 'ParentId' => $id,
+            'Title' => $file->getFilename(),
+            'PathOnClient' => $file->getFilename(),
+            'VersionData' => base64_encode(file_get_contents($file->getPathname())),
           ], JSON_UNESCAPED_UNICODE),
         ]
       );
+      $contentVersionReponse = json_decode($response->getBody());
+      $contentVersion = $this->retrieve($contentVersionReponse->id, "/services/data/v58.0/sobjects/ContentVersion", ['ContentDocumentId']);
+      $documentLink = $this->create([
+        'ContentDocumentId'=> $contentVersion['ContentDocumentId'],
+        'LinkedEntityId'=> $id,
+        'ShareType'=> "V",
+        'Visibility'=> "AllUsers"
+      ], "/services/data/v58.0/sobjects/ContentDocumentLink");
+
     } catch(ClientExceptionInterface $e) {
       $message = $e->getMessage();
       throw new Exception("Unable to attach file to {$id}: {$message}");
     }
 
-    return json_decode($response->getBody());
+    return $contentVersion;
   }
 }
