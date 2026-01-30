@@ -25,7 +25,7 @@
     "drupal/simple_sitemap": "^4.1",
     "drupal/stage_file_proxy": ">2.1",
     "drupal/twig_tweak": "^3.3",
-    "drupal/vite": "~1.4.0",
+    "drupal/vite": "^1.5",
     "drupal/webp": "^1.0@RC",
     "drupal/webform": "^6.3@beta",
     "drush/drush": "^13",
