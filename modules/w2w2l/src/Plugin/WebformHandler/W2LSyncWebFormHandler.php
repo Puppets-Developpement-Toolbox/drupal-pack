@@ -181,10 +181,17 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
     $fileStorage = \Drupal::entityTypeManager()->getStorage('file');
 
     $inputFiles = [];
+    $sfObject = $this->sfData[$id];
+    if(!$sfObject) return;
+    $skPpts = array_map('strtolower', array_keys($sfObject));
+
     foreach($data as $key => $value) {
       $element = $webform->getElement($key);
       if(str_ends_with($element['#type'], '_file') || $element['#type'] === 'webform_dropzonejs') {
         $inputFiles[$key] = $element['#multiple'] ? (array)$value : $value;
+        unset($data[$key]);
+      }
+      if(!in_array(strtolower($key), $skPpts)) {
         unset($data[$key]);
       }
     }
