@@ -154,7 +154,7 @@ class RestClient implements ClientInterface
     return json_decode($response->getBody());
   }
 
-  public function attach($id, \SplFileInfo $file) {
+  public function attach(string $id, string $fileName, \SplFileInfo $file) {
     try {
       $url = "{$this->instanceUrl}/services/data/v58.0/sobjects/ContentVersion";
 
@@ -169,7 +169,7 @@ class RestClient implements ClientInterface
           ],
           "body" => json_encode([
             // 'ParentId' => $id,
-            'Title' => $file->getFilename(),
+            'Title' => $fileName,
             'PathOnClient' => $file->getFilename(),
             'VersionData' => base64_encode(file_get_contents($file->getPathname())),
           ], JSON_UNESCAPED_UNICODE),
@@ -190,5 +190,64 @@ class RestClient implements ClientInterface
     }
 
     return $contentVersion;
+  }
+
+  public function getAttachments(string $linkedEntityId): array
+  {
+    try {
+      // Récupérer les ContentDocumentLinks liés à l'entité
+      $query = urlencode("SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId = '{$linkedEntityId}'");
+      $url = "{$this->instanceUrl}/services/data/v58.0/query/?q={$query}";
+
+      $response = $this->client->request(
+        'GET',
+        $url,
+        [
+          RequestOptions::HEADERS => [
+            'Authorization' => "Bearer {$this->accessToken}",
+            'Content-Type' => 'application/json'
+          ],
+        ]
+      );
+
+      $links = json_decode($response->getBody(), true);
+      if (empty($links['records'])) {
+        return [];
+      }
+
+      $attachments = [];
+      foreach ($links['records'] as $link) {
+        $contentDocumentId = $link['ContentDocumentId'];
+
+        // Récupérer la dernière version du document (Title contient le format: inputName_drupalFileId[_index])
+        $versionQuery = urlencode("SELECT Id, Title, PathOnClient FROM ContentVersion WHERE ContentDocumentId = '{$contentDocumentId}' AND IsLatest = true");
+        $versionUrl = "{$this->instanceUrl}/services/data/v58.0/query/?q={$versionQuery}";
+
+        $versionResponse = $this->client->request(
+          'GET',
+          $versionUrl,
+          [
+            RequestOptions::HEADERS => [
+              'Authorization' => "Bearer {$this->accessToken}",
+              'Content-Type' => 'application/json'
+            ],
+          ]
+        );
+
+        $versions = json_decode($versionResponse->getBody(), true);
+        if (!empty($versions['records'])) {
+          $version = $versions['records'][0];
+          $attachments[] = [
+            'id' => $version['Id'],
+            'title' => $version['Title'],
+            'filename' => $version['PathOnClient'],
+          ];
+        }
+      }
+
+      return $attachments;
+    } catch (ClientExceptionInterface $e) {
+      throw new Exception("Unable to get attachments for {$linkedEntityId}: " . $e->getMessage());
+    }
   }
 }

@@ -10,6 +10,8 @@ interface ClientInterface {
 
   public function update($id, $sobject_type, $sobject);
 
-  public function attach($id, \SplFileInfo $file);
+  public function attach(string $id, string $fileName, \SplFileInfo $file);
+
+  public function getAttachments(string $linkedEntityId): array;
 
 }

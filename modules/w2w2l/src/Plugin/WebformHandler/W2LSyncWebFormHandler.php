@@ -3,11 +3,11 @@
 namespace Drupal\w2w2l\Plugin\WebformHandler;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Entity\File;
 use Drupal\file\FileStorageInterface;
 use Drupal\webform\Annotation\WebformHandler;
 use Drupal\webform\Element\WebformAjaxElementTrait;
 use Drupal\webform\Plugin\WebformHandlerBase;
-use Drupal\webform\Twig\WebformTwigExtension;
 use Drupal\webform\Utility\WebformElementHelper;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
@@ -26,6 +26,8 @@ use Drupal\webform\WebformSubmissionInterface;
 final class W2LSyncWebFormHandler extends WebformHandlerBase
 {
   use WebformAjaxElementTrait;
+
+  private $sfData = [];
 
   /**************************
    ** Plugin Configuration **
@@ -100,9 +102,47 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
 
     $salesforce = \Drupal::service("w2w2l.gateway");
     $retrieved = $salesforce->retrieve($id, $this->configuration["object_url"]);
+
     if($retrieved['success']) {
+      $this->sfData[$id] = $retrieved['data'];
       $sfObject = array_change_key_case($retrieved['data'], CASE_LOWER);
+
+      // Récupérer les pièces jointes depuis Salesforce
+      $attachments = $salesforce->getAttachments($id);
+      $filesByElement = [];
+      if ($attachments['success'] && !empty($attachments['data'])) {
+        foreach ($attachments['data'] as $attachment) {
+          // Le Title est au format: inputName_drupalFileId_sfid_[_index]
+          $parts = array_filter(explode('_', current(explode($id, $attachment['title']))));
+          $drupalFileId = array_pop($parts);
+          $elementName = implode('_', $parts);
+          if (!empty($drupalFileId) && is_numeric($drupalFileId)) {
+            if (!isset($filesByElement[$elementName])) {
+              $filesByElement[$elementName] = [];
+            }
+            $filesByElement[$elementName][] = (int) $drupalFileId;
+          }
+        }
+      }
+
       foreach($elements as $key => $element) {
+        // Précharger les fichiers
+        if (isset($filesByElement[$key])) {
+          $fileIds = $filesByElement[$key];
+          // non géré par dropzonejs https://git.drupalcode.org/project/dropzonejs/-/blob/8.x-2.x/src/Element/DropzoneJs.php?ref_type=heads#L91
+          // $elements[$key]['#default_value'] = count($fileIds) === 1 && empty($element['#multiple'])
+          //   ? $fileIds[0]
+          //   : $fileIds;
+          $files = File::loadMultiple($fileIds);
+          if(count($files)) {
+            $elements[$key]['#prefix'] = 'Vous avez déjà uploadé des fichiers : ';
+            $elements[$key]['#prefix'] .= implode(', ', array_map(function($file) {
+              return $file->getFilename();
+            }, $files));
+          }
+          continue;
+        }
+
         if(empty($sfObject[$key])) continue;
 
         switch ($element['#type']) {
@@ -140,14 +180,21 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
     /** @var FileStorageInterface $fileStorage */
     $fileStorage = \Drupal::entityTypeManager()->getStorage('file');
 
-    $files = [];
+    $inputFiles = [];
     foreach($data as $key => $value) {
       $element = $webform->getElement($key);
       if(str_ends_with($element['#type'], '_file') || $element['#type'] === 'webform_dropzonejs') {
-        $files = array_merge($files, (array)$value);
+        $inputFiles[$key] = $element['#multiple'] ? (array)$value : $value;
         unset($data[$key]);
       }
     }
+
+    \Drupal::moduleHandler()->invokeAll("w2w2l_sync_prepare", [
+      $webform_submission,
+      current($this->sfData),
+      $data,
+      $inputFiles
+    ]);
 
     try{
       $result = \Drupal::service("w2w2l.gateway")->update(
@@ -157,12 +204,18 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
       );
 
 
-      foreach($files as $file) {
-        $fileEntity = $fileStorage->load($file);
-        $result = \Drupal::service("w2w2l.gateway")->attach(
-          $id,
-          new \SplFileObject($fileEntity->getFileUri())
-        );
+      foreach($inputFiles as $inputName => $inputFile) {
+        $isMultiple = is_array($inputFile);
+        foreach((array)$inputFile as $index => $file) {
+          $fileEntity = $fileStorage->load($file);
+          $fileName = [$inputName, $fileEntity->id(), $id];
+          if($isMultiple) $fileName[] = $index + 1;
+          $result = \Drupal::service("w2w2l.gateway")->attach(
+            $id,
+            implode('_', $fileName),
+            new \SplFileObject($fileEntity->getFileUri())
+          );
+        }
       }
     } catch (\Exception $e) {
       \Drupal::logger("w2w2l")->error(

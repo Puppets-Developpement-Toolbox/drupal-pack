@@ -85,12 +85,27 @@ class SalesForce
   }
 
 
-  public function attach($id, \SplFileInfo $file) {
+  public function attach(string $id, string $fileName, \SplFileInfo $file) {
     try {
-      $data = $this->client->attach($id, $file);
+      $data = $this->client->attach($id, $fileName, $file);
 
       \Drupal::logger('w2w2l')
         ->info("Attached file to {$id}: " . json_encode($data, JSON_PRETTY_PRINT));
+
+      return ['success' => true, 'data' => $data];
+    } catch (\Throwable $e) {
+      \Drupal::logger('w2w2l')->error($e->getMessage());
+      return ['success' => false, 'error' => $e->getMessage()];
+    }
+  }
+
+  public function getAttachments(string $linkedEntityId)
+  {
+    try {
+      $data = $this->client->getAttachments($linkedEntityId);
+
+      \Drupal::logger('w2w2l')
+        ->info("Retrieved attachments for {$linkedEntityId}: " . json_encode($data, JSON_PRETTY_PRINT));
 
       return ['success' => true, 'data' => $data];
     } catch (\Throwable $e) {
