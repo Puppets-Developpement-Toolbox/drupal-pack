@@ -199,8 +199,8 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
     \Drupal::moduleHandler()->invokeAll("w2w2l_sync_prepare", [
       $webform_submission,
       current($this->sfData),
-      $data,
-      $inputFiles
+      &$data,
+      &$inputFiles
     ]);
 
     try{
@@ -209,7 +209,6 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
         $this->configuration["object_url"],
         $data
       );
-
 
       foreach($inputFiles as $inputName => $inputFile) {
         $isMultiple = is_array($inputFile);
