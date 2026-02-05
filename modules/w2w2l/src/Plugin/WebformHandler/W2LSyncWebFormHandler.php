@@ -109,14 +109,21 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
 
       // Récupérer les pièces jointes depuis Salesforce
       $attachments = $salesforce->getAttachments($id);
+
       $filesByElement = [];
       if ($attachments['success'] && !empty($attachments['data'])) {
         foreach ($attachments['data'] as $attachment) {
           // Le Title est au format: inputName_drupalFileId_sfid_[_index]
           $parts = array_filter(explode('_', current(explode($id, $attachment['title']))));
           $drupalFileId = array_pop($parts);
-          $elementName = implode('_', $parts);
-          if (!empty($drupalFileId) && is_numeric($drupalFileId)) {
+          $elementName = null;
+          foreach ($elements as $key => $value) {
+            if (str_starts_with(strtolower($attachment['title']), strtolower($key))) {
+              $elementName = $key;
+              continue;
+            }
+          }
+          if ($elementName && !empty($drupalFileId) && is_numeric($drupalFileId)) {
             if (!isset($filesByElement[$elementName])) {
               $filesByElement[$elementName] = [];
             }
