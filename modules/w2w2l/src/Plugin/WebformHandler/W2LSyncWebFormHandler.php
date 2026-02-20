@@ -142,10 +142,9 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
           //   : $fileIds;
           $files = File::loadMultiple($fileIds);
           if(count($files)) {
-            $elements[$key]['#prefix'] = 'Vous avez déjà uploadé des fichiers : ';
-            $elements[$key]['#prefix'] .= implode(', ', array_map(function($file) {
+            $elements[$key]['#w2w2l_uploaded_files'] = array_map(function($file) {
               return $file->getFilename();
-            }, $files));
+            }, $files);
           }
           continue;
         }
