@@ -113,21 +113,10 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
       $filesByElement = [];
       if ($attachments['success'] && !empty($attachments['data'])) {
         foreach ($attachments['data'] as $attachment) {
-          // Le Title est au format: inputName_drupalFileId_sfid_[_index]
-          $parts = array_filter(explode('_', current(explode($id, $attachment['title']))));
-          $drupalFileId = array_pop($parts);
-          $elementName = null;
           foreach ($elements as $key => $value) {
             if (str_starts_with(strtolower($attachment['title']), strtolower($key))) {
-              $elementName = $key;
-              continue;
+              $filesByElement[$key][] = $attachment;
             }
-          }
-          if ($elementName && !empty($drupalFileId) && is_numeric($drupalFileId)) {
-            if (!isset($filesByElement[$elementName])) {
-              $filesByElement[$elementName] = [];
-            }
-            $filesByElement[$elementName][] = (int) $drupalFileId;
           }
         }
       }
@@ -135,16 +124,10 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
       foreach($elements as $key => $element) {
         // Précharger les fichiers
         if (isset($filesByElement[$key])) {
-          $fileIds = $filesByElement[$key];
-          // non géré par dropzonejs https://git.drupalcode.org/project/dropzonejs/-/blob/8.x-2.x/src/Element/DropzoneJs.php?ref_type=heads#L91
-          // $elements[$key]['#default_value'] = count($fileIds) === 1 && empty($element['#multiple'])
-          //   ? $fileIds[0]
-          //   : $fileIds;
-          $files = File::loadMultiple($fileIds);
-          if(count($files)) {
+          if(!empty($filesByElement[$key])) {
             $elements[$key]['#w2w2l_uploaded_files'] = array_map(function($file) {
-              return $file->getFilename();
-            }, $files);
+              return $file['filename'];
+            }, $filesByElement[$key]);
           }
           continue;
         }
