@@ -220,7 +220,7 @@ class RestClient implements ClientInterface
         $contentDocumentId = $link['ContentDocumentId'];
 
         // Récupérer la dernière version du document (Title contient le format: inputName_drupalFileId[_index])
-        $versionQuery = urlencode("SELECT Id, Title, PathOnClient FROM ContentVersion WHERE ContentDocumentId = '{$contentDocumentId}' AND IsLatest = true");
+        $versionQuery = urlencode("SELECT Id, Title, PathOnClient, ContentSize FROM ContentVersion WHERE ContentDocumentId = '{$contentDocumentId}' AND IsLatest = true");
         $versionUrl = "{$this->instanceUrl}/services/data/v58.0/query/?q={$versionQuery}";
 
         $versionResponse = $this->client->request(
@@ -241,6 +241,7 @@ class RestClient implements ClientInterface
             'id' => $version['Id'],
             'title' => $version['Title'],
             'filename' => $version['PathOnClient'],
+            'size' => $version['ContentSize'],
           ];
         }
       }
