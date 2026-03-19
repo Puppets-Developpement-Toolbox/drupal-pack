@@ -125,9 +125,7 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
         // Précharger les fichiers
         if (isset($filesByElement[$key])) {
           if(!empty($filesByElement[$key])) {
-            $elements[$key]['#w2w2l_uploaded_files'] = array_map(function($file) {
-              return $file['filename'];
-            }, $filesByElement[$key]);
+            $elements[$key]['#w2w2l_uploaded_files'] = $filesByElement[$key];
           }
           continue;
         }
