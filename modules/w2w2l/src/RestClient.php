@@ -124,7 +124,6 @@ class RestClient implements ClientInterface
       $message = $e->getMessage();
       throw new Exception("Unable to retrieve {$sobject_type} with ID {$id}: {$message}");
     }
-
     return json_decode($response->getBody(), true);
   }
 
@@ -165,14 +164,24 @@ class RestClient implements ClientInterface
           RequestOptions::HEADERS => [
             'Authorization' => "Bearer {$this->accessToken}",
             'X-PrettyPrint' => 1,
-            'Content-Type' => 'application/json'
           ],
-          "body" => json_encode([
-            // 'ParentId' => $id,
-            'Title' => $fileName,
-            'PathOnClient' => $file->getFilename(),
-            'VersionData' => base64_encode(file_get_contents($file->getPathname())),
-          ], JSON_UNESCAPED_UNICODE),
+          RequestOptions::MULTIPART => [
+            [
+              'name' => 'entity_content',
+              'contents' => json_encode([
+                'Title' => $fileName,
+                'PathOnClient' => $file->getFilename(),
+              ]),
+              'headers' => [
+                'Content-Type' => 'application/json'
+              ]
+            ],
+            [
+              'name' => 'VersionData',
+              'contents' => fopen($file->getPathname(), 'r'),
+              'filename' => $file->getFilename(),
+            ]
+          ]
         ]
       );
       $contentVersionReponse = json_decode($response->getBody());
@@ -185,8 +194,8 @@ class RestClient implements ClientInterface
       ], "/services/data/v58.0/sobjects/ContentDocumentLink");
 
     } catch(ClientExceptionInterface $e) {
-      $message = $e->getMessage();
-      throw new Exception("Unable to attach file to {$id}: {$message}");
+      $message = $e->getResponse()->getBody() . '';
+      throw new Exception("Unable to attach file via multipart to {$id}: {$message}");
     }
 
     return $contentVersion;
