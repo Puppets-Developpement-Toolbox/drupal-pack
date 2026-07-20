@@ -190,33 +190,54 @@ final class W2LSyncWebFormHandler extends WebformHandlerBase
       &$inputFiles
     ]);
 
+    $fileErrors = [];
+
     try{
       $result = \Drupal::service("w2w2l.gateway")->update(
         $id,
         $this->configuration["object_url"],
         $data
       );
+      if (!$result['success']) {
+        $result['errorMessage'] = $result['error'] ?? 'Unknown error updating Salesforce record.';
+      }
 
       foreach($inputFiles as $inputName => $inputFile) {
         $isMultiple = is_array($inputFile);
         foreach((array)$inputFile as $index => $file) {
           $fileEntity = $fileStorage->load($file);
+          if (!$fileEntity) {
+            $message = "Missing file entity (fid: {$file}) for field '{$inputName}' on submission {$webform_submission->id()}.";
+            \Drupal::logger("w2w2l")->error($message);
+            $fileErrors[] = $message;
+            continue;
+          }
           $fileName = [$inputName, $fileEntity->id(), $id];
           if($isMultiple) $fileName[] = $index + 1;
-          $result = \Drupal::service("w2w2l.gateway")->attach(
+          $fileResult = \Drupal::service("w2w2l.gateway")->attach(
             $id,
             implode('_', $fileName),
             new \SplFileObject($fileEntity->getFileUri())
           );
+          if (!$fileResult['success']) {
+            $message = "Failed to attach file '{$fileEntity->getFilename()}' (field '{$inputName}', submission {$webform_submission->id()}, Salesforce ID {$id}): {$fileResult['error']}";
+            \Drupal::logger("w2w2l")->error($message);
+            $fileErrors[] = $message;
+          }
         }
       }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
       \Drupal::logger("w2w2l")->error(
-        "Error sending data to Salesforce: @message",
-        ["@message" => $e->getMessage()]
+        "Error sending data to Salesforce (submission @sid): @message",
+        ["@sid" => $webform_submission->id(), "@message" => $e->getMessage()]
       );
       $result['success'] = false;
       $result['errorMessage'] = $e->getMessage();
+    }
+
+    if (!empty($fileErrors)) {
+      $result['success'] = false;
+      $result['errorMessage'] = trim(($result['errorMessage'] ?? '') . "\n" . implode("\n", $fileErrors));
     }
 
     \Drupal::moduleHandler()->invokeAll("w2w2l_sent", [
